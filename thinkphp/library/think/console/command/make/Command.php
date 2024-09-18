@@ -29,7 +29,7 @@ class Command extends Make
 
     protected function buildClass($name)
     {
-        $commandName = $this->input->getArgument('commandName') ?: strtolower(basename($name));
+        $commandName = $this->input->getArgument('commandName') ?: strtolower(basename($name ?? ''));
         $namespace   = trim(implode('\\', array_slice(explode('\\', $name), 0, -1)), '\\');
 
         $class = str_replace($namespace . '\\', '', $name);

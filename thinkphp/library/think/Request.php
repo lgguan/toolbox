@@ -597,12 +597,12 @@ class Request
         if (!$this->baseFile) {
             $url = '';
             if (!$this->isCli()) {
-                $script_name = basename($this->server('SCRIPT_FILENAME'));
-                if (basename($this->server('SCRIPT_NAME')) === $script_name) {
+                $script_name = basename($this->server('SCRIPT_FILENAME') ?? '');
+                if (basename($this->server('SCRIPT_NAME') ?? '') === $script_name) {
                     $url = $this->server('SCRIPT_NAME');
-                } elseif (basename($this->server('PHP_SELF')) === $script_name) {
+                } elseif (basename($this->server('PHP_SELF') ?? '') === $script_name) {
                     $url = $this->server('PHP_SELF');
-                } elseif (basename($this->server('ORIG_SCRIPT_NAME')) === $script_name) {
+                } elseif (basename($this->server('ORIG_SCRIPT_NAME') ?? '') === $script_name) {
                     $url = $this->server('ORIG_SCRIPT_NAME');
                 } elseif (($pos = strpos($this->server('PHP_SELF'), '/' . $script_name)) !== false) {
                     $url = substr($this->server('SCRIPT_NAME'), 0, $pos) . '/' . $script_name;

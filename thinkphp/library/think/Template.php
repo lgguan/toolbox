@@ -1227,7 +1227,7 @@ class Template
                 $module = isset($module) ? $module : $this->app['request']->module();
                 $path   = $this->config['view_base'] . ($module ? $module . DIRECTORY_SEPARATOR : '');
             } else {
-                $path = isset($module) ? $this->app->getAppPath() . $module . DIRECTORY_SEPARATOR . basename($this->config['view_path']) . DIRECTORY_SEPARATOR : $this->config['view_path'];
+                $path = isset($module) ? $this->app->getAppPath() . $module . DIRECTORY_SEPARATOR . basename($this->config['view_path'] ?? '') . DIRECTORY_SEPARATOR : $this->config['view_path'];
             }
 
             $template = $path . $template . '.' . ltrim($this->config['view_suffix'], '.');
