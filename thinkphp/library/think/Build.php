@@ -118,7 +118,7 @@ class Build
             mkdir($this->basePath . $module);
         }
 
-        if (basename($this->app->getRuntimePath()) != $module) {
+        if (basename($this->app->getRuntimePath() ?? '') != $module) {
             // 创建配置文件和公共文件
             $this->buildCommon($module);
             // 创建模块的默认页面
@@ -200,7 +200,7 @@ class Build
             $modules = glob($this->basePath . '*', GLOB_ONLYDIR);
 
             foreach ($modules as $module) {
-                $module = basename($module);
+                $module = basename($module ?? '');
 
                 if (in_array($module, $this->app->config('app.deny_module_list'))) {
                     continue;
@@ -236,7 +236,7 @@ class Build
         $controllers = glob($path . '*.php');
 
         foreach ($controllers as $controller) {
-            $controller = basename($controller, '.php');
+            $controller = basename($controller ?? '', '.php');
 
             $class = new \ReflectionClass($namespace . '\\' . ($module ? $module . '\\' : '') . $layer . '\\' . $controller);
 

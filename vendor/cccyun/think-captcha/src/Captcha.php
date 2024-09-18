@@ -139,6 +139,10 @@ class Captcha
         $this->imageW || $this->imageW = $this->length * $this->fontSize * 1.5 + $this->length * $this->fontSize / 2;
         // 图片高(px)
         $this->imageH || $this->imageH = $this->fontSize * 2.5;
+
+        $this->imageW = (int)$this->imageW;
+        $this->imageH = (int)$this->imageH;
+
         // 建立一幅 $this->imageW x $this->imageH 的图像
         $this->im = imagecreate($this->imageW, $this->imageH);
         // 设置背景
@@ -221,35 +225,35 @@ class Captcha
      *        ω：决定周期（最小正周期T=2π/∣ω∣）
      *
      */
-    private function writeCurve()
+    protected function writeCurve(): void
     {
         $px = $py = 0;
 
         // 曲线前部分
-        $A = mt_rand(1, $this->imageH / 2); // 振幅
-        $b = mt_rand(-$this->imageH / 4, $this->imageH / 4); // Y轴方向偏移量
-        $f = mt_rand(-$this->imageH / 4, $this->imageH / 4); // X轴方向偏移量
-        $T = mt_rand($this->imageH, $this->imageW * 2); // 周期
+        $A = mt_rand(1, (int)($this->imageH / 2)); // 振幅
+        $b = mt_rand((int)(-$this->imageH / 4), (int)($this->imageH / 4)); // Y轴方向偏移量
+        $f = mt_rand((int)(-$this->imageH / 4), (int)($this->imageH / 4)); // X轴方向偏移量
+        $T = mt_rand((int)$this->imageH, (int)$this->imageW * 2); // 周期
         $w = (2 * M_PI) / $T;
 
         $px1 = 0; // 曲线横坐标起始位置
-        $px2 = mt_rand($this->imageW / 2, $this->imageW * 0.8); // 曲线横坐标结束位置
+        $px2 = mt_rand((int)($this->imageW / 2), (int)($this->imageW * 0.8)); // 曲线横坐标结束位置
 
         for ($px = $px1; $px <= $px2; $px = $px + 1) {
             if (0 != $w) {
                 $py = $A * sin($w * $px + $f) + $b + $this->imageH / 2; // y = Asin(ωx+φ) + b
                 $i  = (int) ($this->fontSize / 5);
                 while ($i > 0) {
-                    imagesetpixel($this->im, $px + $i, $py + $i, $this->color); // 这里(while)循环画像素点比imagettftext和imagestring用字体大小一次画出（不用这while循环）性能要好很多
+                    imagesetpixel($this->im, (int)($px + $i), (int)($py + $i), $this->color); // 这里(while)循环画像素点比imagettftext和imagestring用字体大小一次画出（不用这while循环）性能要好很多
                     $i--;
                 }
             }
         }
 
         // 曲线后部分
-        $A   = mt_rand(1, $this->imageH / 2); // 振幅
-        $f   = mt_rand(-$this->imageH / 4, $this->imageH / 4); // X轴方向偏移量
-        $T   = mt_rand($this->imageH, $this->imageW * 2); // 周期
+        $A   = mt_rand(1, (int)($this->imageH / 2)); // 振幅
+        $f   = mt_rand((int)(-$this->imageH / 4), (int)($this->imageH / 4)); // X轴方向偏移量
+        $T   = mt_rand((int)$this->imageH, (int)$this->imageW * 2); // 周期
         $w   = (2 * M_PI) / $T;
         $b   = $py - $A * sin($w * $px + $f) - $this->imageH / 2;
         $px1 = $px2;
@@ -260,7 +264,7 @@ class Captcha
                 $py = $A * sin($w * $px + $f) + $b + $this->imageH / 2; // y = Asin(ωx+φ) + b
                 $i  = (int) ($this->fontSize / 5);
                 while ($i > 0) {
-                    imagesetpixel($this->im, $px + $i, $py + $i, $this->color);
+                    imagesetpixel($this->im, (int)($px + $i), (int)($py + $i), $this->color);
                     $i--;
                 }
             }
@@ -271,7 +275,7 @@ class Captcha
      * 画杂点
      * 往图片上写不同颜色的字母或数字
      */
-    private function writeNoise()
+    protected function writeNoise(): void
     {
         $codeSet = '2345678abcdefhijkmnpqrstuvwxyz';
         for ($i = 0; $i < 10; $i++) {
@@ -279,7 +283,7 @@ class Captcha
             $noiseColor = imagecolorallocate($this->im, mt_rand(150, 225), mt_rand(150, 225), mt_rand(150, 225));
             for ($j = 0; $j < 5; $j++) {
                 // 绘杂点
-                imagestring($this->im, 5, mt_rand(-10, $this->imageW), mt_rand(-10, $this->imageH), $codeSet[mt_rand(0, 29)], $noiseColor);
+                imagestring($this->im, 5, mt_rand(-10, (int)$this->imageW), mt_rand(-10, (int)$this->imageH), $codeSet[mt_rand(0, 29)], $noiseColor);
             }
         }
     }
@@ -288,7 +292,7 @@ class Captcha
      * 绘制背景图片
      * 注：如果验证码输出图片比较大，将占用比较多的系统资源
      */
-    private function background()
+    protected function background(): void
     {
         $path = __DIR__ . '/../assets/bgs/';
         $dir  = dir($path);
@@ -306,7 +310,7 @@ class Captcha
         list($width, $height) = @getimagesize($gb);
         // Resample
         $bgImage = @imagecreatefromjpeg($gb);
-        @imagecopyresampled($this->im, $bgImage, 0, 0, 0, 0, $this->imageW, $this->imageH, $width, $height);
+        @imagecopyresampled($this->im, $bgImage, 0, 0, 0, 0, (int)$this->imageW, (int)$this->imageH, $width, $height);
         @imagedestroy($bgImage);
     }
 
